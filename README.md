@@ -8,6 +8,7 @@ An interactive review sheet for solving quadratic equations. Open `index.html` i
 
 **Features**
 - 17 starting questions: GCF, trinomials with and without a leading coefficient, difference of squares, square rooting, `(x + h)² + k` equations, rationalizing denominators, and the quadratic formula
+- Calculator button: a floating, draggable calculator (√, powers, parentheses, Ans) students can open next to any question
 - Help button with a method guide, typing tips, and step-by-step hints
 - Whiteboard on the right side (pen colors, eraser, undo, clear), saved separately for each question
 - Worked solution after each question

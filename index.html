@@ -231,6 +231,26 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
 .hint-steps .h p { margin: 0 0 4px; font-size: .88rem; color: var(--muted); }
 .hint-steps .m { font-size: 1.05rem; overflow-x: auto; }
 
+/* Calculator */
+.calc { position: fixed; z-index: 15; right: max(16px, env(safe-area-inset-right, 0px)); bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  width: min(300px, calc(100vw - 32px)); background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 8px 32px rgba(10,15,25,.25); overflow: hidden; }
+.calc-head { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px 8px 14px; border-bottom: 1px solid var(--line); cursor: move; touch-action: none; user-select: none; }
+.calc-head b { font-family: var(--font-display); font-size: .95rem; }
+.calc-body { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+.calc-screen { background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; text-align: right; }
+.calc-screen input { width: 100%; border: 0; background: transparent; color: var(--ink); font: 1.05rem ui-monospace, Menlo, Consolas, monospace; text-align: right; padding: 2px 0; outline: none; }
+.calc-out { font: 600 1.35rem ui-monospace, Menlo, Consolas, monospace; min-height: 1.8rem; overflow-x: auto; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.calc-out.err { color: var(--bad); font: .85rem var(--font-body); padding-top: 6px; }
+.calc-keys { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; }
+.calc-keys button { height: 38px; border-radius: 7px; border: 1px solid var(--line); background: var(--surface); font-weight: 600; font-size: .9rem; padding: 0; }
+.calc-keys button:hover { background: var(--surface-2); }
+.calc-keys .fn { color: var(--accent); background: var(--accent-soft); border-color: transparent; }
+.calc-keys .op { background: var(--surface-2); }
+.calc-keys .eq, .calc-keys .eq:hover { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.calc-keys .fn:hover { background: var(--accent-soft); filter: brightness(.96); }
+.calc-keys .clr { color: var(--bad); }
+.calc-keys .wide { grid-column: span 2; }
+
 @media (max-width: 980px) {
   .layout { grid-template-columns: minmax(0, 1fr); }
   .board { position: relative; top: auto; height: 520px; }
@@ -256,6 +276,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
   <nav class="dots" id="dots" aria-label="Questions"></nav>
   <div class="top-actions">
     <button class="btn help" id="helpBtn" type="button">? Help</button>
+    <button class="btn" id="calcBtn" type="button" aria-expanded="false" aria-controls="calc">Calculator</button>
     <button class="btn" id="summaryBtn" type="button">Summary</button>
   </div>
 </header>
@@ -289,6 +310,36 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
       <button class="btn" id="helpClose" type="button">Close</button>
     </div>
     <div class="modal-body" id="helpBody"></div>
+  </div>
+</div>
+
+<div class="calc" id="calc" role="dialog" aria-label="Calculator" hidden>
+  <div class="calc-head" id="calcHead"><b>Calculator</b><button class="tool" id="calcClose" type="button" aria-label="Close calculator">✕</button></div>
+  <div class="calc-body">
+    <div class="calc-screen">
+      <input id="calcIn" type="text" inputmode="none" autocomplete="off" spellcheck="false" aria-label="Calculator expression" placeholder="0">
+      <div class="calc-out" id="calcOut" aria-live="polite"></div>
+    </div>
+    <div class="calc-keys" id="calcKeys">
+      <button class="fn" data-c="sqrt(" type="button" title="Square root">√</button>
+      <button class="fn" data-c="^2" type="button" title="Squared">x²</button>
+      <button class="fn" data-c="^" type="button" title="Power">xʸ</button>
+      <button class="fn" data-c="(" type="button">(</button>
+      <button class="fn" data-c=")" type="button">)</button>
+      <button data-c="7" type="button">7</button><button data-c="8" type="button">8</button><button data-c="9" type="button">9</button>
+      <button class="op" data-c="÷" type="button" title="Divide">÷</button>
+      <button class="clr" data-c="AC" type="button" title="Clear all">AC</button>
+      <button data-c="4" type="button">4</button><button data-c="5" type="button">5</button><button data-c="6" type="button">6</button>
+      <button class="op" data-c="×" type="button" title="Multiply">×</button>
+      <button class="op" data-c="DEL" type="button" title="Delete">⌫</button>
+      <button data-c="1" type="button">1</button><button data-c="2" type="button">2</button><button data-c="3" type="button">3</button>
+      <button class="op" data-c="−" type="button" title="Subtract">−</button>
+      <button class="op" data-c="ans" type="button" title="Last answer">Ans</button>
+      <button data-c="0" type="button">0</button><button data-c="." type="button">.</button>
+      <button class="op" data-c="(−" type="button" title="Negative">(−)</button>
+      <button class="op" data-c="+" type="button" title="Add">+</button>
+      <button class="eq" data-c="=" type="button">=</button>
+    </div>
   </div>
 </div>
 
@@ -1092,6 +1143,115 @@ const Board = {
     this.redraw();
   },
 };
+
+/* ---------- Calculator ---------- */
+const Calc = (() => {
+  const el = $("#calc"), inp = $("#calcIn"), out = $("#calcOut"), btn = $("#calcBtn");
+  let ans = 0, justEvaluated = false;
+  function fmt(v) {
+    if (!isFinite(v)) throw new Error("Not a real number");
+    if (Math.abs(v) < 1e-12) return "0";
+    const r = +v.toPrecision(12);
+    return Math.abs(r) >= 1e12 || Math.abs(r) < 1e-6 ? r.toExponential(6).replace(/\.?0+e/, "e") : String(r);
+  }
+  function evaluate(src) {
+    const t = src.replace(/×|\*/g, "*").replace(/÷|\//g, "/").replace(/[−–]/g, "-").replace(/√/g, "sqrt").replace(/π/g, "pi").replace(/\s+/g, "").toLowerCase();
+    const toks = t.match(/\d*\.?\d+(?:e[+-]?\d+)?|sqrt|ans|pi|[-+*/^()]/g) || [];
+    if (toks.join("") !== t) throw new Error("Check what you typed");
+    let i = 0;
+    const peek = () => toks[i], next = () => toks[i++];
+    function expr() { let v = term(); while (peek() === "+" || peek() === "-") { const o = next(), w = term(); v = o === "+" ? v + w : v - w; } return v; }
+    function term() {
+      let v = unary();
+      while (true) {
+        const p = peek();
+        if (p === "*" || p === "/") { next(); const w = unary(); if (p === "/" && w === 0) throw new Error("Can't divide by 0"); v = p === "*" ? v * w : v / w; }
+        else if (p !== undefined && /^(\d|\.|\(|sqrt|ans|pi)/.test(p)) v *= unary(); // implicit multiply, e.g. 2(3) or 3sqrt(5)
+        else return v;
+      }
+    }
+    function unary() { if (peek() === "-") { next(); return -unary(); } if (peek() === "+") { next(); return unary(); } return power(); }
+    function power() { const b = atom(); if (peek() === "^") { next(); const e = unary(); const v = Math.pow(b, e); if (isNaN(v)) throw new Error("Not a real number"); return v; } return b; }
+    function atom() {
+      const k = next();
+      if (k === undefined) throw new Error("Finish the expression");
+      if (k === "(") { const v = expr(); if (next() !== ")") throw new Error("Missing )"); return v; }
+      if (k === "sqrt") {
+        let v; if (peek() === "(") { next(); v = expr(); if (next() !== ")") throw new Error("Missing )"); } else v = power();
+        if (v < 0) throw new Error("√ of a negative isn't a real number"); return Math.sqrt(v);
+      }
+      if (k === "ans") return ans;
+      if (k === "pi") return Math.PI;
+      if (/^[\d.]/.test(k)) return parseFloat(k);
+      throw new Error("Check what you typed");
+    }
+    const v = expr(); if (i < toks.length) throw new Error(peek() === ")" ? "Extra )" : "Check what you typed");
+    return v;
+  }
+  function insert(txt) {
+    if (justEvaluated) { inp.value = /^[+×÷−^]/.test(txt) ? "ans" : ""; justEvaluated = false; }
+    const a = inp.selectionStart ?? inp.value.length, b = inp.selectionEnd ?? inp.value.length;
+    inp.value = inp.value.slice(0, a) + txt + inp.value.slice(b);
+    const pos = a + txt.length; inp.setSelectionRange(pos, pos); preview();
+  }
+  function preview() {
+    out.classList.remove("err");
+    if (!inp.value.trim()) { out.textContent = ""; return; }
+    try { out.textContent = "= " + fmt(evaluate(inp.value)); out.style.opacity = .55; } catch { out.textContent = ""; }
+  }
+  function equals() {
+    if (!inp.value.trim()) return;
+    try { const v = evaluate(inp.value); fmt(v); ans = v; out.textContent = fmt(v); out.style.opacity = 1; out.classList.remove("err"); justEvaluated = true; }
+    catch (e) { out.textContent = e.message; out.style.opacity = 1; out.classList.add("err"); }
+  }
+  function open(show) {
+    el.hidden = !show; btn.setAttribute("aria-expanded", show); btn.classList.toggle("primary", show);
+    if (show) { clamp(); inp.focus(); }
+  }
+  function clamp() {
+    if (!el.style.left) return;
+    const r = el.getBoundingClientRect();
+    el.style.left = Math.min(Math.max(0, r.left), innerWidth - r.width) + "px";
+    el.style.top = Math.min(Math.max(0, r.top), innerHeight - r.height) + "px";
+  }
+  btn.addEventListener("click", () => open(el.hidden));
+  $("#calcClose").addEventListener("click", () => { open(false); btn.focus(); });
+  $("#calcKeys").addEventListener("click", e => {
+    const k = e.target.closest("button"); if (!k) return; const c = k.dataset.c;
+    if (c === "=") equals();
+    else if (c === "AC") { inp.value = ""; out.textContent = ""; justEvaluated = false; }
+    else if (c === "DEL") {
+      justEvaluated = false;
+      const a = inp.selectionStart ?? inp.value.length, b = inp.selectionEnd ?? inp.value.length;
+      if (a !== b) { inp.value = inp.value.slice(0, a) + inp.value.slice(b); inp.setSelectionRange(a, a); }
+      else if (a > 0) { const n = inp.value.slice(0, a).match(/(sqrt\(|ans)$/)?.[0].length || 1; inp.value = inp.value.slice(0, a - n) + inp.value.slice(a); inp.setSelectionRange(a - n, a - n); }
+      preview();
+    }
+    else if (c === "(−") insert("(−");
+    else insert(c);
+    if (matchMedia("(pointer: fine)").matches) inp.focus();
+  });
+  inp.addEventListener("input", () => { justEvaluated = false; preview(); });
+  inp.addEventListener("keydown", e => {
+    if (e.key === "Enter" || e.key === "=") { e.preventDefault(); equals(); }
+    else if (e.key === "Escape") { e.stopPropagation(); open(false); btn.focus(); }
+    else if (justEvaluated && e.key.length === 1) {
+      e.preventDefault(); insert(e.key === "*" ? "×" : e.key === "/" ? "÷" : e.key === "-" ? "−" : e.key);
+    }
+  });
+  // Drag by the title bar
+  const head = $("#calcHead"); let drag = null;
+  head.addEventListener("pointerdown", e => {
+    if (e.target.closest("button")) return;
+    const r = el.getBoundingClientRect(); drag = { dx: e.clientX - r.left, dy: e.clientY - r.top };
+    el.style.right = "auto"; el.style.bottom = "auto"; el.style.left = r.left + "px"; el.style.top = r.top + "px";
+    head.setPointerCapture(e.pointerId);
+  });
+  head.addEventListener("pointermove", e => { if (!drag) return; el.style.left = e.clientX - drag.dx + "px"; el.style.top = e.clientY - drag.dy + "px"; clamp(); });
+  head.addEventListener("pointerup", () => { drag = null; });
+  addEventListener("resize", clamp);
+  return { evaluate };
+})();
 
 function measureHeader() { document.documentElement.style.setProperty("--header-h", $("#top").offsetHeight + "px"); }
 new ResizeObserver(measureHeader).observe($("#top"));
