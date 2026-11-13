@@ -1,0 +1,1104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>[hidden]{display:none!important} body{margin:0} img{max-width:100%}</style>
+</head>
+<body>
+<title>Solving Quadratics Review</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<style>
+/* Layout: sticky header with progress dots; two columns — question work on the left, whiteboard on the right (stacks on phones). */
+:root {
+  --bg: #f2f4f8;
+  --surface: #ffffff;
+  --surface-2: #f7f8fb;
+  --ink: #18202c;
+  --muted: #586273;
+  --line: #d8dde6;
+  --accent: #2453c4;
+  --accent-soft: #e6edfb;
+  --accent-ink: #ffffff;
+  --good: #1b7543;
+  --good-bg: #e2f3e9;
+  --bad: #b3232c;
+  --bad-bg: #fbe6e7;
+  --warn: #8f5600;
+  --warn-bg: #fcf0d9;
+  --shadow: 0 1px 2px rgba(20, 30, 50, .06), 0 4px 16px rgba(20, 30, 50, .06);
+  --font-display: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-math: "Cambria Math", "STIX Two Math", "Latin Modern Math", math, serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f131a; --surface: #171d27; --surface-2: #1c2330; --ink: #e5e9f0; --muted: #9aa4b4; --line: #2b3545;
+    --accent: #86a8ff; --accent-soft: #1e2b47; --accent-ink: #0c1222;
+    --good: #67d397; --good-bg: #13311f; --bad: #ff8f95; --bad-bg: #3b1a1d; --warn: #f3b85e; --warn-bg: #3a2b12;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f131a; --surface: #171d27; --surface-2: #1c2330; --ink: #e5e9f0; --muted: #9aa4b4; --line: #2b3545;
+  --accent: #86a8ff; --accent-soft: #1e2b47; --accent-ink: #0c1222;
+  --good: #67d397; --good-bg: #13311f; --bad: #ff8f95; --bad-bg: #3b1a1d; --warn: #f3b85e; --warn-bg: #3a2b12;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.25);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; letter-spacing: -.01em; }
+button { font: inherit; cursor: pointer; color: inherit; }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+math { font-family: var(--font-math); }
+
+/* Header */
+.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); border-bottom: 1px solid var(--line);
+  padding-block: 10px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex; align-items: center; gap: 12px 20px; flex-wrap: wrap;
+}
+.brand { display: flex; flex-direction: column; min-width: 0; }
+.brand h1 { font-size: 1.15rem; }
+.brand span { font-size: .78rem; color: var(--muted); }
+.dots { display: flex; flex-wrap: wrap; gap: 5px; flex: 1 1 260px; min-width: 0; }
+.dot {
+  width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--line); background: var(--surface-2);
+  font-size: .7rem; font-weight: 600; display: grid; place-items: center; color: var(--muted); padding: 0;
+  font-variant-numeric: tabular-nums;
+}
+.dot.good { background: var(--good-bg); border-color: var(--good); color: var(--good); }
+.dot.retry { background: var(--warn-bg); border-color: var(--warn); color: var(--warn); }
+.dot.bad { background: var(--bad-bg); border-color: var(--bad); color: var(--bad); }
+.dot.current { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent); }
+.dot.extra { border-style: dashed; }
+.top-actions { display: flex; gap: 8px; }
+.btn {
+  border: 1px solid var(--line); background: var(--surface); padding: 8px 14px; border-radius: 8px; font-weight: 600; font-size: .9rem;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn:hover { background: var(--surface-2); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn.help { border-color: var(--accent); color: var(--accent); }
+.btn:disabled { opacity: .45; cursor: default; }
+
+/* Main two-column layout */
+.layout {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px;
+  padding-block: 18px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  max-width: 1500px; margin: 0 auto;
+}
+.work { min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px; box-shadow: var(--shadow); min-width: 0; }
+
+/* Question card */
+.q-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.eyebrow { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+.badge { font-size: .72rem; font-weight: 600; padding: 3px 9px; border-radius: 99px; background: var(--accent-soft); color: var(--accent); }
+.equation {
+  margin: 14px 0 4px; padding: 18px 12px; border-radius: 10px; background: var(--surface-2); border: 1px solid var(--line);
+  font-size: 1.6rem; text-align: center; overflow-x: auto;
+}
+.step { border-top: 1px solid var(--line); padding-top: 16px; margin-top: 16px; display: flex; flex-direction: column; gap: 12px; }
+.step h3 { font-size: 1.02rem; display: flex; gap: 10px; align-items: center; }
+.step-num {
+  width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-size: .8rem;
+  display: grid; place-items: center; flex: none;
+}
+.methods { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.method {
+  text-align: left; border: 1.5px solid var(--line); background: var(--surface); border-radius: 10px; padding: 10px 12px;
+  display: flex; flex-direction: column; gap: 2px; min-width: 0;
+}
+.method b { font-size: .92rem; }
+.method small { color: var(--muted); font-size: .78rem; }
+.method:hover:not(:disabled) { border-color: var(--accent); }
+.method.sel { border-color: var(--accent); background: var(--accent-soft); }
+.method.right { border-color: var(--good); background: var(--good-bg); }
+.method.wrong { border-color: var(--bad); background: var(--bad-bg); }
+.method.ok { border-color: var(--warn); background: var(--warn-bg); }
+.method:disabled { cursor: default; }
+.method:disabled:not(.right):not(.wrong):not(.ok) { opacity: .55; }
+
+.feedback { border-radius: 10px; padding: 12px 14px; display: flex; gap: 10px; align-items: flex-start; font-size: .93rem; }
+.feedback .icon { font-weight: 700; font-size: 1.1rem; line-height: 1.2; flex: none; width: 22px; text-align: center; }
+.feedback.good { background: var(--good-bg); color: var(--good); }
+.feedback.bad { background: var(--bad-bg); color: var(--bad); }
+.feedback.warn { background: var(--warn-bg); color: var(--warn); }
+.feedback p { margin: 0; color: var(--ink); }
+.feedback strong { color: inherit; }
+
+.answer-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.answer-row label { font-family: var(--font-math); font-size: 1.25rem; font-style: italic; }
+.answer-row input {
+  flex: 1 1 220px; min-width: 0; font: inherit; font-size: 1.05rem; padding: 10px 12px; border-radius: 8px;
+  border: 1.5px solid var(--line); background: var(--surface); color: var(--ink);
+}
+.keypad { display: flex; gap: 6px; flex-wrap: wrap; }
+.key {
+  min-width: 42px; padding: 6px 10px; border-radius: 7px; border: 1px solid var(--line); background: var(--surface-2);
+  font-size: 1rem; font-family: var(--font-math);
+}
+.key:hover { border-color: var(--accent); }
+.preview { min-height: 38px; padding: 8px 12px; border-radius: 8px; border: 1px dashed var(--line); font-size: 1.15rem; overflow-x: auto; }
+.preview .ph { font-family: var(--font-body); font-size: .85rem; color: var(--muted); }
+.preview .err { font-family: var(--font-body); font-size: .85rem; color: var(--bad); }
+.hint-line { font-size: .82rem; color: var(--muted); }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.solution { background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+.solution h4 { margin: 0 0 8px; font-family: var(--font-display); font-size: .95rem; }
+.solution ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 10px; }
+.solution li p { margin: 0 0 2px; font-size: .9rem; color: var(--muted); }
+.solution .m { font-size: 1.1rem; overflow-x: auto; }
+.nav { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+
+/* Summary */
+.score-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+.score { border: 1px solid var(--line); border-radius: 10px; padding: 12px; background: var(--surface-2); }
+.score b { display: block; font-family: var(--font-display); font-size: 1.6rem; font-variant-numeric: tabular-nums; }
+.score span { font-size: .8rem; color: var(--muted); }
+.table-wrap { overflow-x: auto; margin-top: 6px; }
+table { border-collapse: collapse; width: 100%; font-size: .9rem; }
+th, td { text-align: left; padding: 9px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+th { font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pill { font-size: .75rem; font-weight: 600; padding: 3px 9px; border-radius: 99px; white-space: nowrap; }
+.pill.strong { background: var(--good-bg); color: var(--good); }
+.pill.weak { background: var(--bad-bg); color: var(--bad); }
+.pill.none { background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
+.help-list { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+.help-item {
+  border: 1px solid var(--line); border-left: 4px solid var(--bad); border-radius: 8px; padding: 12px 14px;
+  display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap;
+}
+.help-item div { min-width: 0; flex: 1 1 260px; }
+.help-item b { display: block; }
+.help-item p { margin: 2px 0 0; font-size: .87rem; color: var(--muted); }
+.muted { color: var(--muted); }
+
+/* Whiteboard */
+.board {
+  position: sticky; top: calc(env(safe-area-inset-top, 0px) + var(--header-h, 64px) + 12px);
+  height: calc(100vh - var(--header-h, 64px) - 36px - env(safe-area-inset-top, 0px));
+  min-height: 420px; display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line);
+  border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; min-width: 0;
+}
+.board-bar { display: flex; align-items: center; gap: 6px; padding: 8px 10px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.board-title { font-family: var(--font-display); font-weight: 600; font-size: .95rem; margin-right: auto; }
+.tool {
+  height: 32px; min-width: 32px; padding: 0 8px; border-radius: 7px; border: 1px solid var(--line); background: var(--surface);
+  font-size: .8rem; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+}
+.tool.on { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+.swatch { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--line); padding: 0; }
+.swatch.on { box-shadow: 0 0 0 2px var(--accent); }
+.sep { width: 1px; height: 22px; background: var(--line); margin: 0 2px; }
+.canvas-wrap {
+  position: relative; flex: 1; min-height: 0; background-color: #ffffff;
+  background-image: linear-gradient(#e9edf3 1px, transparent 1px), linear-gradient(90deg, #e9edf3 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+.canvas-wrap.nogrid { background-image: none; }
+.canvas-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: crosshair; }
+
+/* Help modal */
+.modal { position: fixed; inset: 0; z-index: 20; background: rgba(10, 15, 25, .5); display: grid; place-items: center;
+  padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.modal-card { background: var(--surface); border-radius: 14px; width: min(720px, 100%); max-height: 100%; overflow-y: auto; box-shadow: var(--shadow); border: 1px solid var(--line); }
+.modal-head { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--surface); }
+.modal-body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 22px; }
+.modal-body h3 { font-size: 1rem; margin-bottom: 8px; }
+.modal-body p { margin: 0 0 6px; }
+.guide { display: grid; gap: 8px; }
+.guide div { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 10px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; font-size: .88rem; align-items: center; }
+.guide div b { color: var(--accent); }
+.typing { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 14px; font-size: .88rem; }
+.typing code { font-family: ui-monospace, Menlo, Consolas, monospace; background: var(--surface-2); border: 1px solid var(--line); padding: 1px 6px; border-radius: 5px; white-space: nowrap; }
+.hint-steps { display: flex; flex-direction: column; gap: 10px; margin: 8px 0; }
+.hint-steps .h { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; background: var(--surface-2); }
+.hint-steps .h p { margin: 0 0 4px; font-size: .88rem; color: var(--muted); }
+.hint-steps .m { font-size: 1.05rem; overflow-x: auto; }
+
+@media (max-width: 980px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  .board { position: relative; top: auto; height: 520px; }
+}
+@media (max-width: 560px) {
+  .methods { grid-template-columns: minmax(0, 1fr); }
+  .score-row { grid-template-columns: minmax(0, 1fr); }
+  .guide div { grid-template-columns: minmax(0, 1fr); }
+  .equation { font-size: 1.3rem; }
+  .panel { padding: 16px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .feedback { animation: pop .25s ease-out; }
+  @keyframes pop { from { transform: translateY(4px); opacity: .4; } to { transform: none; opacity: 1; } }
+}
+</style>
+
+<header class="top" id="top">
+  <div class="brand">
+    <h1>Solving Quadratics Review</h1>
+    <span>Pick the best method, then solve.</span>
+  </div>
+  <nav class="dots" id="dots" aria-label="Questions"></nav>
+  <div class="top-actions">
+    <button class="btn help" id="helpBtn" type="button">? Help</button>
+    <button class="btn" id="summaryBtn" type="button">Summary</button>
+  </div>
+</header>
+
+<main class="layout">
+  <section class="work" id="work" aria-live="polite"></section>
+  <aside class="board" aria-label="Whiteboard">
+    <div class="board-bar">
+      <span class="board-title" id="boardTitle">Whiteboard</span>
+      <button class="swatch on" data-color="#18202c" style="background:#18202c" aria-label="Black pen" type="button"></button>
+      <button class="swatch" data-color="#2453c4" style="background:#2453c4" aria-label="Blue pen" type="button"></button>
+      <button class="swatch" data-color="#c62828" style="background:#c62828" aria-label="Red pen" type="button"></button>
+      <button class="swatch" data-color="#1e7d3c" style="background:#1e7d3c" aria-label="Green pen" type="button"></button>
+      <span class="sep"></span>
+      <button class="tool on" id="penThin" type="button" title="Thin pen">Thin</button>
+      <button class="tool" id="penThick" type="button" title="Thick pen">Thick</button>
+      <button class="tool" id="eraser" type="button" title="Eraser">Eraser</button>
+      <span class="sep"></span>
+      <button class="tool" id="undo" type="button" title="Undo">Undo</button>
+      <button class="tool" id="clear" type="button" title="Clear the board">Clear</button>
+      <button class="tool on" id="grid" type="button" title="Show or hide grid">Grid</button>
+    </div>
+    <div class="canvas-wrap" id="canvasWrap"><canvas id="canvas"></canvas></div>
+  </aside>
+</main>
+
+<div class="modal" id="helpModal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+    <div class="modal-head">
+      <h2 id="helpTitle" style="font-size:1.15rem">Help</h2>
+      <button class="btn" id="helpClose" type="button">Close</button>
+    </div>
+    <div class="modal-body" id="helpBody"></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ---------- Math rendering ---------- */
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+function texFallback(t) {
+  let s = t;
+  for (let i = 0; i < 4; i++) s = s.replace(/\\frac\{([^{}]*)\}\{([^{}]*)\}/g, "($1)/($2)").replace(/\\sqrt\{([^{}]*)\}/g, "√($1)");
+  return s.replace(/\\pm/g, "±").replace(/\\cdot/g, "·").replace(/\\quad|\\;|\\,/g, " ").replace(/\\text\{([^}]*)\}/g, " $1 ")
+    .replace(/\\left|\\right/g, "").replace(/\^2/g, "²").replace(/[{}]/g, "");
+}
+function M(tex, display) {
+  try {
+    if (window.katex) return katex.renderToString(tex, { output: "mathml", displayMode: !!display, throwOnError: false });
+  } catch (e) { /* fall through */ }
+  return `<span style="font-family:var(--font-math)">${esc(texFallback(tex))}</span>`;
+}
+
+/* ---------- Number helpers ---------- */
+const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) { [a, b] = [b, a % b]; } return a; };
+const ri = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+const nz = (a, b) => { let v; do { v = ri(a, b); } while (v === 0); return v; };
+const isSq = n => n >= 0 && Number.isInteger(Math.sqrt(n));
+function simpRad(n) { for (let k = Math.floor(Math.sqrt(n)); k > 1; k--) if (n % (k * k) === 0) return [k, n / (k * k)]; return [1, n]; }
+const fmt = n => (n < 0 ? "−" + (-n) : "" + n);
+
+/* ---------- TeX builders ---------- */
+function coefTerm(c, v, first) {
+  if (c === 0) return "";
+  const abs = Math.abs(c), body = (v && abs === 1) ? v : abs + v;
+  return first ? (c < 0 ? "-" : "") + body : (c < 0 ? " - " : " + ") + body;
+}
+function poly(cs) { const vars = ["x^2", "x", ""]; let out = ""; cs.forEach((c, i) => { out += coefTerm(c, vars[i], out === ""); }); return out || "0"; }
+const binom = (p, q) => poly([0, p, q]);
+const sgn = n => (n < 0 ? ` - ${-n}` : ` + ${n}`);
+function frac(n, d) {
+  if (d < 0) { n = -n; d = -d; }
+  const g = gcd(n, d) || 1; n /= g; d /= g;
+  if (d === 1) return "" + n;
+  return (n < 0 ? "-" : "") + `\\frac{${Math.abs(n)}}{${d}}`;
+}
+const rad = (s, t) => (t === 1 ? "" + s : (s === 1 ? "" : s) + `\\sqrt{${t}}`);
+function ratRad(s, t, d) { const g = gcd(s, d); s /= g; d /= g; const num = rad(s, t); return d === 1 ? num : `\\frac{${num}}{${d}}`; }
+const OR = "\\quad\\text{or}\\quad ";
+const moveText = (c, what) => `${c > 0 ? "Subtract" : "Add"} ${Math.abs(c)} ${c > 0 ? "from" : "to"} both sides${what ? " " + what : ""}.`;
+
+/* ---------- Methods & skills ---------- */
+const METHODS = [
+  { id: "gcf", label: "Factor out the GCF", sub: "Every term shares a common factor" },
+  { id: "factor1", label: "Factor a trinomial (a = 1)", sub: "x² + bx + c" },
+  { id: "factorA", label: "Factor a trinomial (a ≠ 1)", sub: "ax² + bx + c, AC method" },
+  { id: "dos", label: "Difference of squares", sub: "a² − b² = (a − b)(a + b)" },
+  { id: "sqrt", label: "Square root property", sub: "Isolate the square, then ±√" },
+  { id: "formula", label: "Quadratic formula", sub: "x = (−b ± √(b² − 4ac)) / 2a" },
+];
+const SKILLS = {
+  gcf: { name: "Factoring with a GCF", tip: "Look for a number (or x) that divides every term. Factor it out first, then factor what is left." },
+  factor1: { name: "Factoring trinomials (a = 1)", tip: "Find two numbers that multiply to c and add to b." },
+  factorA: { name: "Factoring trinomials (a ≠ 1)", tip: "Multiply a·c. Find two numbers that multiply to a·c and add to b, split the middle term, then factor by grouping." },
+  dos: { name: "Difference of squares", tip: "a²x² − b² factors as (ax − b)(ax + b). There is no middle term." },
+  sqrt: { name: "Solving by square rooting", tip: "Get x² alone, take ± the square root of both sides, then simplify the radical." },
+  vertex: { name: "Square rooting (x + h)² equations", tip: "Isolate the squared binomial, take ± the square root, then add or subtract h. Don't expand!" },
+  formula: { name: "Quadratic formula", tip: "Write the equation in standard form, find b² − 4ac, then simplify the radical and reduce the fraction." },
+  rationalize: { name: "Rationalizing the denominator", tip: "A square root can't stay in the denominator. Multiply the top and bottom by that root: √5/√3 · √3/√3 = √15/3." },
+};
+
+/* ---------- Question builders ---------- */
+function qGcfMono(k, m) {
+  const kx = (k === 1 ? "" : k) + "x", inner = binom(1, m);
+  return {
+    skill: "gcf", eq: poly([k, k * m, 0]) + " = 0", best: "gcf", alsoOk: [], roots: [0, -m],
+    why: `Both terms share a factor of ${kx.replace("x", "x")}. Factor it out and use the zero product property.`,
+    ans: `x = 0, \\; x = ${-m}`,
+    steps: [
+      { t: `Factor out the GCF, ${kx}.`, m: `${kx}(${inner}) = 0` },
+      { t: "Set each factor equal to zero.", m: `${kx} = 0${OR}${inner} = 0` },
+      { t: "Solve each equation.", m: `x = 0${OR}x = ${-m}` },
+    ],
+  };
+}
+function qGcfTri(k, r, s) {
+  const b = -(r + s), c = r * s;
+  return {
+    skill: "gcf", eq: poly([k, k * b, k * c]) + " = 0", best: "gcf", alsoOk: [], roots: [r, s],
+    why: `Every term is divisible by ${k}. Factoring out the GCF leaves a simpler trinomial with a = 1.`,
+    ans: `x = ${r}, \\; x = ${s}`,
+    steps: [
+      { t: `Factor out the GCF, ${k}.`, m: `${k}(${poly([1, b, c])}) = 0` },
+      { t: `Factor the trinomial: two numbers that multiply to ${fmt(c)} and add to ${fmt(b)} are ${fmt(-r)} and ${fmt(-s)}.`, m: `${k}(${binom(1, -r)})(${binom(1, -s)}) = 0` },
+      { t: `Set each factor with an x equal to zero. (${k} ≠ 0, so it gives no solution.)`, m: `x = ${r}${OR}x = ${s}` },
+    ],
+  };
+}
+function qFactor1(r, s, moved) {
+  const b = -(r + s), c = r * s, steps = [];
+  if (moved) steps.push({ t: "Get zero on one side.", m: `${poly([1, b, c])} = 0` });
+  steps.push({ t: `Find two numbers that multiply to ${fmt(c)} and add to ${fmt(b)}: ${fmt(-r)} and ${fmt(-s)}.`, m: `(${binom(1, -r)})(${binom(1, -s)}) = 0` });
+  steps.push({ t: "Set each factor equal to zero and solve.", m: `x = ${r}${OR}x = ${s}` });
+  return {
+    skill: "factor1", eq: moved ? `${poly([1, b, 0])} = ${-c}` : `${poly([1, b, c])} = 0`, best: "factor1", alsoOk: [], roots: [r, s],
+    why: `The leading coefficient is 1 and the trinomial factors: find two numbers that multiply to ${fmt(c)} and add to ${fmt(b)}.`,
+    ans: `x = ${r}, \\; x = ${s}`, steps,
+  };
+}
+function qFactorA(p, q, r2, s2) {
+  const a = p * r2, b = -(p * s2 + q * r2), c = q * s2, m1 = -p * s2, m2 = -q * r2;
+  const split = `${coefTerm(a, "x^2", true)}${coefTerm(m1, "x", false)}${coefTerm(m2, "x", false)}${coefTerm(c, "", false)} = 0`;
+  return {
+    skill: "factorA", eq: poly([a, b, c]) + " = 0", best: "factorA", alsoOk: [], roots: [q / p, s2 / r2],
+    why: `a = ${a}, there is no common factor, and a·c = ${fmt(a * c)} has a factor pair that adds to ${fmt(b)}. Use the AC method.`,
+    ans: `x = ${frac(q, p)}, \\; x = ${frac(s2, r2)}`,
+    steps: [
+      { t: `Multiply a·c = ${a}·${fmt(c)} = ${fmt(a * c)}. Two numbers that multiply to ${fmt(a * c)} and add to ${fmt(b)}: ${fmt(m1)} and ${fmt(m2)}. Split the middle term.`, m: split },
+      { t: "Factor by grouping.", m: `(${binom(p, -q)})(${binom(r2, -s2)}) = 0` },
+      { t: "Set each factor equal to zero and solve.", m: `x = ${frac(q, p)}${OR}x = ${frac(s2, r2)}` },
+    ],
+  };
+}
+function qDos(a, b) {
+  const base = a === 1 ? "x" : `(${a}x)`;
+  return {
+    skill: "dos", eq: `${coefTerm(a * a, "x^2", true)} - ${b * b} = 0`, best: "dos", alsoOk: ["sqrt"], roots: [b / a, -b / a],
+    why: "Two perfect squares are subtracted and there's no middle term, so it factors as (ax − b)(ax + b). The square root property also works.",
+    ans: `x = \\pm ${frac(b, a)}`,
+    steps: [
+      { t: `Both terms are perfect squares.`, m: `${base}^2 - ${b}^2 = 0` },
+      { t: "Factor as a difference of squares.", m: `(${binom(a, -b)})(${binom(a, b)}) = 0` },
+      { t: "Set each factor equal to zero and solve.", m: `x = ${frac(b, a)}${OR}x = ${frac(-b, a)}` },
+    ],
+  };
+}
+function qSqrtInt(a, c, m) {
+  const ax = coefTerm(a, "x^2", true), steps = [];
+  if (c) steps.push({ t: moveText(c), m: `${ax} = ${a * m}` });
+  if (a !== 1) steps.push({ t: `Divide both sides by ${a}.`, m: `x^2 = ${m}` });
+  steps.push({ t: "Take the square root of both sides. Remember ±.", m: `x = \\pm\\sqrt{${m}}` });
+  let ans;
+  if (isSq(m)) { ans = `x = \\pm ${Math.sqrt(m)}`; steps.push({ t: "Simplify.", m: ans }); }
+  else {
+    const [s, t] = simpRad(m); ans = `x = \\pm ${rad(s, t)}`;
+    if (s > 1) steps.push({ t: `Simplify the radical: ${m} = ${s * s} · ${t}, and √${s * s} = ${s}.`, m: ans });
+  }
+  return {
+    skill: "sqrt", eq: `${ax}${c ? sgn(c) : ""} = ${a * m + c}`, best: "sqrt", alsoOk: [], roots: [Math.sqrt(m), -Math.sqrt(m)],
+    why: "There's an x² term but no x term. Get x² by itself, then take the square root of both sides.", ans, steps,
+  };
+}
+function rationalizeSteps(lhs, a, b) {
+  const steps = [];
+  steps.push({ t: `Divide both sides by ${a}.`, m: `${lhs} = \\frac{${b}}{${a}}` });
+  steps.push({ t: "Take the square root of both sides. Remember ±.", m: `${lhs.replace(/\^2$/, "").replace(/^\((.*)\)$/, "$1")} = \\pm\\frac{\\sqrt{${b}}}{\\sqrt{${a}}}` });
+  const [s, t] = simpRad(a * b);
+  const root = lhs.replace(/\^2$/, "").replace(/^\((.*)\)$/, "$1");
+  steps.push({ t: `Rationalize the denominator: multiply the top and bottom by √${a}.`, m: `${root} = \\pm\\frac{\\sqrt{${b}}\\cdot\\sqrt{${a}}}{\\sqrt{${a}}\\cdot\\sqrt{${a}}} = \\pm\\frac{\\sqrt{${a * b}}}{${a}}` });
+  if (s > 1) steps.push({ t: `Simplify: √${a * b} = ${rad(s, t).replace(/\\sqrt\{(\d+)\}/, "√$1")}${gcd(s, a) > 1 ? ", then reduce the fraction" : ""}.`, m: `${root} = \\pm ${ratRad(s, t, a)}` });
+  return { steps, final: ratRad(s, t, a) };
+}
+function qSqrtRat(a, b, form, c) {
+  const steps = []; let eq;
+  if (form === "minus") { eq = `${a}x^2 - ${b} = 0`; steps.push({ t: `Add ${b} to both sides.`, m: `${a}x^2 = ${b}` }); }
+  else if (form === "shift") { eq = `${a}x^2${sgn(c)} = ${b + c}`; steps.push({ t: moveText(c), m: `${a}x^2 = ${b}` }); }
+  else eq = `${a}x^2 = ${b}`;
+  const r = rationalizeSteps("x^2", a, b);
+  return {
+    skill: "sqrt", eq, best: "sqrt", alsoOk: [], rationalize: true, roots: [Math.sqrt(b / a), -Math.sqrt(b / a)],
+    why: "There's no x term. Isolate x², then take the square root. Watch out: the answer will need a rationalized denominator.",
+    ans: `x = \\pm ${r.final}`, steps: steps.concat(r.steps),
+  };
+}
+function qVertex(h, k, m) {
+  const xh = binom(1, h), center = -h, steps = [];
+  if (k) steps.push({ t: moveText(k), m: `(${xh})^2 = ${m}` });
+  steps.push({ t: "Take the square root of both sides. Remember ±.", m: `${xh} = \\pm\\sqrt{${m}}` });
+  const shift = { t: `${h > 0 ? "Subtract" : "Add"} ${Math.abs(h)} ${h > 0 ? "from" : "to"} both sides.` };
+  let ans, roots;
+  if (isSq(m)) {
+    const n = Math.sqrt(m);
+    steps.push({ t: `Simplify: √${m} = ${n}.`, m: `${xh} = \\pm ${n}` });
+    steps.push({ ...shift, m: `x = ${center} \\pm ${n}` });
+    steps.push({ t: "Find both answers.", m: `x = ${center + n}${OR}x = ${center - n}` });
+    ans = `x = ${center + n}, \\; x = ${center - n}`; roots = [center + n, center - n];
+  } else {
+    const [s, t] = simpRad(m);
+    if (s > 1) steps.push({ t: `Simplify the radical: √${m} = ${s}√${t}.`, m: `${xh} = \\pm ${rad(s, t)}` });
+    steps.push({ ...shift, m: `x = ${center} \\pm ${rad(s, t)}` });
+    ans = `x = ${center} \\pm ${rad(s, t)}`; roots = [center + Math.sqrt(m), center - Math.sqrt(m)];
+  }
+  return {
+    skill: "vertex", eq: `(${xh})^2${k ? sgn(k) : ""} = ${m + k}`, best: "sqrt", alsoOk: [], roots,
+    why: "The x is inside a squared binomial. Isolate the square and take the square root of both sides. There's no need to expand it.", ans, steps,
+  };
+}
+function qVertexRat(a, h, b, k) {
+  const xh = binom(1, h), center = -h, steps = [];
+  if (k) steps.push({ t: moveText(k), m: `${a}(${xh})^2 = ${b}` });
+  const r = rationalizeSteps(`(${xh})^2`, a, b);
+  const all = steps.concat(r.steps);
+  all.push({ t: `${h > 0 ? "Subtract" : "Add"} ${Math.abs(h)} ${h > 0 ? "from" : "to"} both sides.`, m: `x = ${center} \\pm ${r.final}` });
+  return {
+    skill: "vertex", eq: `${a}(${xh})^2${k ? sgn(k) : ""} = ${b + k}`, best: "sqrt", alsoOk: [], rationalize: true,
+    roots: [center + Math.sqrt(b / a), center - Math.sqrt(b / a)],
+    why: "The x is inside a squared binomial. Isolate the square, take the square root, and rationalize the denominator.",
+    ans: `x = ${center} \\pm ${r.final}`, steps: all,
+  };
+}
+function qFormula(a, b, c, rearr) {
+  const D = b * b - 4 * a * c, steps = [];
+  if (rearr) steps.push({ t: "Write the equation in standard form.", m: `${poly([a, b, c])} = 0` });
+  steps.push({ t: `a = ${a}, b = ${fmt(b)}, c = ${fmt(c)}. Find the discriminant.`, m: `b^2 - 4ac = (${b})^2 - 4(${a})(${c}) = ${D}` });
+  steps.push({ t: "Substitute into the quadratic formula.", m: `x = \\frac{${-b} \\pm \\sqrt{${D}}}{${2 * a}}` });
+  const [s, t] = simpRad(D);
+  if (s > 1) steps.push({ t: `Simplify the radical: √${D} = ${s}√${t}.`, m: `x = \\frac{${-b} \\pm ${rad(s, t)}}{${2 * a}}` });
+  const g = gcd(gcd(b, s), 2 * a), B = -b / g, S = s / g, A = 2 * a / g;
+  const num = `${B} \\pm ${rad(S, t)}`, final = A === 1 ? num : `\\frac{${num}}{${A}}`;
+  if (g > 1) steps.push({ t: `Every term shares a factor of ${g}. Divide it out.`, m: `x = ${final}` });
+  return {
+    skill: "formula", eq: rearr ? `${coefTerm(a, "x^2", true)} = ${poly([0, -b, -c])}` : `${poly([a, b, c])} = 0`,
+    best: "formula", alsoOk: [], roots: [(-b + Math.sqrt(D)) / (2 * a), (-b - Math.sqrt(D)) / (2 * a)],
+    why: `This trinomial doesn't factor (its discriminant, ${D}, isn't a perfect square), so use the quadratic formula.`,
+    ans: `x = ${final}`, steps,
+  };
+}
+
+/* ---------- Random generators for extra practice ---------- */
+const NONSQ = [2, 3, 5, 6, 7, 10, 11, 13, 14, 15, 17, 19, 21];
+function randSqrtRat() {
+  const a = pick([2, 3, 5, 6, 7]); let b; do { b = ri(1, 15); } while (gcd(a, b) !== 1 || b === a);
+  return qSqrtRat(a, b, pick(["eq", "minus", "shift"]), nz(-9, 9));
+}
+function randVertexRat() {
+  const a = pick([2, 3, 5]); let b; do { b = ri(1, 13); } while (gcd(a, b) !== 1);
+  return qVertexRat(a, nz(-8, 8), b, pick([0, 0, nz(-9, 9)]));
+}
+const GEN = {
+  gcf() {
+    if (Math.random() < 0.45) return qGcfMono(ri(2, 6), nz(-9, 9));
+    let r, s; do { r = nz(-7, 7); s = nz(-7, 7); } while (r === s || r + s === 0);
+    return qGcfTri(ri(2, 5), r, s);
+  },
+  factor1() { let r, s; do { r = nz(-9, 9); s = nz(-9, 9); } while (r === s || r + s === 0); return qFactor1(r, s, Math.random() < 0.4); },
+  factorA() {
+    for (;;) {
+      const p = pick([2, 3, 5]), q = nz(-7, 7), r2 = pick([1, 1, 2, 3]), s2 = nz(-6, 6);
+      if (gcd(p, q) !== 1 || gcd(r2, s2) !== 1) continue;
+      const a = p * r2, b = -(p * s2 + q * r2), c = q * s2;
+      if (b === 0 || gcd(gcd(a, b), c) !== 1 || q * r2 === s2 * p || a > 15) continue;
+      return qFactorA(p, q, r2, s2);
+    }
+  },
+  dos() { if (Math.random() < 0.45) return qDos(1, ri(2, 12)); let a, b; do { a = ri(2, 6); b = ri(1, 11); } while (gcd(a, b) !== 1); return qDos(a, b); },
+  sqrt() {
+    const kind = pick(["perfect", "simplify", "rat", "rat"]);
+    if (kind === "perfect") return qSqrtInt(pick([1, 1, 2, 3, 5]), pick([0, nz(-15, 15)]), ri(2, 10) ** 2);
+    if (kind === "simplify") return qSqrtInt(pick([1, 1, 2, 3]), pick([0, nz(-12, 12)]), ri(2, 5) ** 2 * pick([2, 3, 5, 6, 7, 10]));
+    return randSqrtRat();
+  },
+  vertex() {
+    if (Math.random() < 0.3) return randVertexRat();
+    const m = Math.random() < 0.4 ? ri(2, 9) ** 2 : pick([1, 1, 1, 2, 3]) ** 2 * pick(NONSQ);
+    return qVertex(nz(-9, 9), pick([0, nz(-12, 12)]), m);
+  },
+  formula() {
+    for (;;) {
+      const a = pick([1, 1, 2, 3, 4, 5]), b = nz(-9, 9), c = nz(-9, 9), D = b * b - 4 * a * c;
+      if (D <= 0 || isSq(D) || gcd(gcd(a, b), c) !== 1) continue;
+      return qFormula(a, b, c, Math.random() < 0.35);
+    }
+  },
+  rationalize() { return Math.random() < 0.5 ? randSqrtRat() : randVertexRat(); },
+};
+
+/* ---------- Starting set (17 questions) ---------- */
+function startingSet() {
+  return [
+    qGcfMono(3, -4),            // 3x² − 12x = 0
+    qFactor1(-2, -3, false),    // x² + 5x + 6 = 0
+    qDos(1, 7),                 // x² − 49 = 0
+    qVertex(2, -6, 14),         // (x + 2)² − 6 = 8
+    qFactorA(2, -1, 1, -3),     // 2x² + 7x + 3 = 0
+    qFormula(1, 4, -1, false),  // x² + 4x − 1 = 0
+    qSqrtRat(3, 5, "minus"),    // 3x² − 5 = 0
+    qGcfTri(4, 4, -2),          // 4x² − 8x − 32 = 0
+    qDos(3, 4),                 // 9x² − 16 = 0
+    qFactor1(5, -2, true),      // x² − 3x = 10
+    qVertexRat(2, -3, 7, 0),    // 2(x − 3)² = 7
+    qFormula(2, -3, -4, false), // 2x² − 3x − 4 = 0
+    qSqrtInt(1, -3, 48),        // x² − 3 = 45
+    qFactorA(3, 4, 1, 2),       // 3x² − 10x + 8 = 0
+    qSqrtRat(5, 8, "eq"),       // 5x² = 8
+    qVertex(-5, 3, 25),         // (x − 5)² + 3 = 28
+    qFormula(3, -2, -4, true),  // 3x² = 2x + 4
+  ].map((q, i) => ({ ...q, id: "q" + (i + 1) }));
+}
+
+/* ---------- Answer parser ---------- */
+function tokenize(str) {
+  const toks = []; let i = 0;
+  while (i < str.length) {
+    const ch = str[i];
+    if (/\s/.test(ch)) { i++; continue; }
+    if (/[0-9.]/.test(ch)) {
+      let j = i; while (j < str.length && /[0-9.]/.test(str[j])) j++;
+      const raw = str.slice(i, j);
+      if (!/^(\d+\.?\d*|\.\d+)$/.test(raw)) throw new Error(`"${raw}" isn't a number I can read.`);
+      toks.push({ k: "n", v: parseFloat(raw), raw }); i = j; continue;
+    }
+    if ("+-*/^()±√,".includes(ch)) { toks.push({ k: ch }); i++; continue; }
+    if (/[a-z]/i.test(ch)) throw new Error("Type only the values of x (numbers, √, ±, fractions). Leave out letters.");
+    throw new Error(`I can't read "${ch}". Use numbers, √, ±, / and parentheses.`);
+  }
+  return toks;
+}
+function parseExpr(toks) {
+  let p = 0;
+  const peek = () => toks[p];
+  const eat = k => { if (toks[p] && toks[p].k === k) { p++; return true; } return false; };
+  function expr() { let a = term(); while (peek() && "+-±".includes(peek().k)) { const op = toks[p++].k; a = { t: "bin", op, a, b: term() }; } return a; }
+  function term() {
+    let a = unary();
+    for (;;) {
+      const t = peek(); if (!t) break;
+      if (t.k === "*" || t.k === "/") { p++; a = { t: "bin", op: t.k, a, b: unary() }; continue; }
+      if (t.k === "n" || t.k === "(" || t.k === "√") { a = { t: "bin", op: "*", imp: true, a, b: power() }; continue; }
+      break;
+    }
+    return a;
+  }
+  function unary() {
+    const t = peek();
+    if (t && (t.k === "-" || t.k === "+" || t.k === "±")) { p++; const a = unary(); return t.k === "+" ? a : { t: t.k === "-" ? "neg" : "pm", a }; }
+    return power();
+  }
+  function power() { let a = primary(); if (eat("^")) a = { t: "bin", op: "^", a, b: unary() }; return a; }
+  function primary() {
+    const t = peek();
+    if (!t) throw new Error("Your answer seems to stop early. Is something missing at the end?");
+    if (t.k === "n") { p++; return { t: "num", v: t.v, raw: t.raw }; }
+    if (t.k === "(") { p++; const a = expr(); if (!eat(")")) throw new Error("A closing parenthesis ) is missing."); return { t: "par", a }; }
+    if (t.k === "√") { p++; return { t: "sqrt", a: primary() }; }
+    throw new Error(`Something is out of place near "${t.k}".`);
+  }
+  const ast = expr();
+  if (p < toks.length) throw new Error(toks[p].k === ")" ? "There's an extra closing parenthesis )." : `Something is out of place near "${toks[p].k}".`);
+  return ast;
+}
+function parseAnswer(raw) {
+  const s = raw.replace(/[−–—]/g, "-").replace(/[×·]/g, "*").replace(/÷/g, "/")
+    .replace(/plus\s*or\s*minus|\+\s*\/\s*-|\+\s*-/gi, "±").replace(/\bpm\b/gi, "±")
+    .replace(/square\s*root|sqrt|root/gi, "√").replace(/x\s*[₁₂12]?\s*=/gi, "")
+    .replace(/\b(or|and)\b/gi, ",").replace(/;/g, ",");
+  const toks = tokenize(s), parts = [[]]; let depth = 0;
+  for (const t of toks) {
+    if (t.k === "(") depth++; if (t.k === ")") depth--;
+    if (t.k === "," && depth === 0) parts.push([]); else parts[parts.length - 1].push(t);
+  }
+  const asts = parts.filter(x => x.length).map(parseExpr);
+  if (!asts.length) throw new Error("Type your answer first.");
+  return asts;
+}
+function ev(n) {
+  switch (n.t) {
+    case "num": return [n.v];
+    case "par": return ev(n.a);
+    case "neg": return ev(n.a).map(x => -x);
+    case "pm": return ev(n.a).flatMap(x => [x, -x]);
+    case "sqrt": return ev(n.a).map(x => Math.sqrt(x));
+    case "bin": {
+      const A = ev(n.a), B = ev(n.b), out = [];
+      for (const x of A) for (const y of B) {
+        if (n.op === "+") out.push(x + y); else if (n.op === "-") out.push(x - y); else if (n.op === "±") out.push(x + y, x - y);
+        else if (n.op === "*") out.push(x * y); else if (n.op === "/") out.push(x / y); else out.push(Math.pow(x, y));
+      }
+      return out;
+    }
+  }
+  return [NaN];
+}
+const strip = n => (n.t === "par" ? strip(n.a) : n);
+const has = (n, f) => !!n && (f(n) || has(n.a, f) || has(n.b, f));
+function flagWalk(n, f) {
+  if (!n) return f;
+  if (n.t === "bin" && n.op === "/" && has(n.b, x => x.t === "sqrt")) f.radDen = true;
+  if (n.t === "sqrt") {
+    const inner = strip(n.a);
+    if (inner.t === "num" && Number.isInteger(inner.v) && inner.v > 1) {
+      const [s, t] = simpRad(inner.v);
+      if (s > 1 && !f.unsimp) f.unsimp = { v: inner.v, s, t };
+    } else if (has(inner, x => x.t === "bin" && x.op === "/")) f.radFrac = true;
+  }
+  flagWalk(n.a, f); flagWalk(n.b, f); return f;
+}
+const wrapAdd = a => (a.t === "bin" && "+-±".includes(a.op) ? `\\left(${tex(a)}\\right)` : tex(a));
+function tex(n) {
+  switch (n.t) {
+    case "num": return n.raw;
+    case "par": return `\\left(${tex(n.a)}\\right)`;
+    case "neg": return "-" + wrapAdd(n.a);
+    case "pm": return "\\pm " + wrapAdd(n.a);
+    case "sqrt": return `\\sqrt{${tex(strip(n.a))}}`;
+    case "bin":
+      if (n.op === "/") return `\\frac{${tex(strip(n.a))}}{${tex(strip(n.b))}}`;
+      if (n.op === "^") return `{${tex(n.a)}}^{${tex(strip(n.b))}}`;
+      if (n.op === "*") return n.imp && n.b.t !== "num" ? `${tex(n.a)}${tex(n.b)}` : `${tex(n.a)} \\cdot ${tex(n.b)}`;
+      return `${tex(n.a)} ${n.op === "±" ? "\\pm" : n.op} ${tex(n.b)}`;
+  }
+  return "";
+}
+function uniq(vals) { const out = []; for (const v of vals) if (!out.some(o => Math.abs(o - v) < 1e-7)) out.push(v); return out; }
+function checkAnswer(q, raw) {
+  const asts = parseAnswer(raw);
+  let vals = []; asts.forEach(a => vals.push(...ev(a)));
+  if (vals.some(v => !isFinite(v))) return { status: "error", msg: "Part of your answer isn't a real number. Check for a square root of a negative or a division by zero." };
+  vals = uniq(vals); const exp = uniq(q.roots);
+  const close = (v, e, tol) => Math.abs(v - e) < tol;
+  const match = tol => vals.length === exp.length && exp.every(e => vals.some(v => close(v, e, tol)));
+  const f = {}; asts.forEach(a => flagWalk(a, f));
+  if (match(1e-6)) {
+    if (f.radDen || f.radFrac) return { status: "almost", rat: true, msg: "Your values are correct, but there's a square root in a denominator. Rationalize the denominator to finish." };
+    if (f.unsimp) return { status: "almost", msg: `Your values are correct, but √${f.unsimp.v} isn't simplified. √${f.unsimp.v} = ${f.unsimp.s}√${f.unsimp.t}.` };
+    return { status: "correct" };
+  }
+  if (match(0.011)) return { status: "almost", msg: "Those decimals are close. Give the exact answer instead, using √ and fractions rather than rounded decimals." };
+  const found = exp.filter(e => vals.some(v => close(v, e, 1e-6))).length;
+  if (found && vals.length < exp.length) return { status: "wrong", msg: `You found ${found} of the ${exp.length} solutions. Look for the other one. Did you use ± or set every factor equal to zero?` };
+  if (found) return { status: "wrong", msg: "At least one of your values is right, but not all of them. Check each solution." };
+  if (vals.length === exp.length && exp.every(e => vals.some(v => close(v, -e, 1e-6)))) return { status: "wrong", msg: "Check your signs. Your answers have the opposite signs of the real solutions." };
+  return { status: "wrong", msg: "Not quite. Check your work on the whiteboard, or open Help for a hint." };
+}
+
+/* ---------- State ---------- */
+const STORE = "quadReview.v1";
+let state = load() || fresh();
+function fresh() { const qs = startingSet(); return { questions: qs, res: {}, cur: 0, view: "q", nextId: qs.length + 1, drafts: {} }; }
+function load() { try { const s = JSON.parse(localStorage.getItem(STORE)); return s && Array.isArray(s.questions) && s.questions.length ? s : null; } catch (e) { return null; } }
+function save() { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) { /* storage unavailable */ } }
+const R = id => (state.res[id] = state.res[id] || { method: null, methodOk: null, methodStatus: null, attempts: 0, firstOk: null, solved: false, revealed: false, hints: 0, ratIssue: false, last: null });
+
+/* ---------- Rendering ---------- */
+const $ = s => document.querySelector(s);
+const work = $("#work");
+function dotClass(q) {
+  const r = state.res[q.id]; if (!r) return "";
+  if (r.solved && r.firstOk) return "good";
+  if (r.solved) return "retry";
+  if (r.revealed || r.attempts) return "bad";
+  return "";
+}
+function renderDots() {
+  $("#dots").innerHTML = state.questions.map((q, i) =>
+    `<button class="dot ${dotClass(q)} ${q.extra ? "extra" : ""} ${state.view === "q" && i === state.cur ? "current" : ""}" data-i="${i}" type="button" aria-label="Question ${i + 1}">${i + 1}</button>`).join("");
+}
+function render() {
+  renderDots();
+  if (state.view === "summary") { renderSummary(); Board.setKey("summary", "Whiteboard · Summary"); }
+  else { renderQuestion(); const q = state.questions[state.cur]; Board.setKey(q.id, `Whiteboard · Question ${state.cur + 1}`); }
+  save();
+}
+function methodLabel(id) { return METHODS.find(m => m.id === id).label; }
+function renderQuestion() {
+  const q = state.questions[state.cur], r = R(q.id), n = state.questions.length;
+  const methodDone = r.methodStatus !== null;
+  let h = `<div class="panel">
+    <div class="q-head"><span class="eyebrow">Question ${state.cur + 1} of ${n}</span>${q.extra ? `<span class="badge">Extra practice</span>` : ""}</div>
+    <div class="equation">${M(q.eq, true)}</div>
+    <div class="step"><h3><span class="step-num">1</span>What is the best method to solve this equation?</h3>
+    <div class="methods" role="radiogroup" aria-label="Method">`;
+  for (const m of METHODS) {
+    let cls = "";
+    if (methodDone) {
+      if (m.id === q.best) cls = "right";
+      else if (m.id === r.method) cls = q.alsoOk.includes(m.id) ? "ok" : "wrong";
+    } else if (r.method === m.id) cls = "sel";
+    h += `<button class="method ${cls}" data-method="${m.id}" type="button" role="radio" aria-checked="${r.method === m.id}" ${methodDone ? "disabled" : ""}><b>${m.label}</b><small>${m.sub}</small></button>`;
+  }
+  h += `</div>`;
+  if (!methodDone) {
+    h += `<div class="actions"><button class="btn primary" id="checkMethod" type="button" ${r.method ? "" : "disabled"}>Check method</button>
+      <button class="btn help" data-help type="button">? Help</button></div>`;
+  } else {
+    const st = r.methodStatus;
+    const head = st === "right" ? "Yes, that's the best method." : st === "ok" ? `That works too. The best method is <strong>${methodLabel(q.best)}</strong>.` : `Not the best choice. The best method is <strong>${methodLabel(q.best)}</strong>.`;
+    let extra = "";
+    if (st === "wrong" && r.method === "formula") extra = " The quadratic formula always works, but this equation can be solved faster another way.";
+    if (st === "wrong" && q.best === "formula" && r.method !== "formula") extra = " Check before you factor: if the discriminant isn't a perfect square, the trinomial won't factor.";
+    h += feedback(st === "right" ? "good" : st === "ok" ? "warn" : "bad", st === "wrong" ? "✗" : "✓", `${head} ${esc(q.why)}${extra}`);
+  }
+  h += `</div>`;
+  if (methodDone) {
+    const finished = r.solved || r.revealed;
+    const draft = (state.drafts && state.drafts[q.id]) || "";
+    h += `<div class="step"><h3><span class="step-num">2</span>Solve. Type every solution, separated by commas.</h3>
+      <div class="answer-row"><label for="ans">x =</label><input id="ans" type="text" autocomplete="off" spellcheck="false" inputmode="text" placeholder="e.g. 3, −2   or   (1 ± √13)/3" value="${esc(draft)}" ${finished ? "disabled" : ""}></div>
+      ${finished ? "" : `<div class="keypad">
+        <button class="key" data-ins="√" type="button" title="Square root">√</button>
+        <button class="key" data-ins="±" type="button" title="Plus or minus">±</button>
+        <button class="key" data-ins="()" type="button" title="Parentheses">( )</button>
+        <button class="key" data-ins="/" type="button" title="Fraction bar">/</button>
+        <button class="key" data-ins="-" type="button" title="Negative">−</button>
+        <button class="key" data-ins=", " type="button" title="Next solution">,</button>
+      </div>`}
+      <div class="preview" id="preview"></div>
+      ${finished ? "" : `<div class="hint-line">Type √ as <b>sqrt</b> and ± as <b>+-</b> if you don't want to use the buttons. Press Enter to check.</div>
+      <div class="actions"><button class="btn primary" id="checkAns" type="button">Check answer</button>
+        ${r.attempts ? `<button class="btn" id="reveal" type="button">Show solution</button>` : ""}
+        <button class="btn help" data-help type="button">? Help</button></div>`}
+      ${answerFeedback(r)}
+    </div>`;
+    if (finished) {
+      h += `<div class="solution"><h4>Worked solution</h4><ol>${q.steps.map(s => `<li><p>${esc(s.t)}</p><div class="m">${M(s.m)}</div></li>`).join("")}</ol>
+        <p style="margin:12px 0 0"><b>Answer:</b> ${M(q.ans)}</p></div>`;
+    }
+  }
+  h += `</div>`;
+  const last = state.cur === n - 1;
+  h += `<div class="nav"><button class="btn" id="prev" type="button" ${state.cur === 0 ? "disabled" : ""}>← Previous</button>
+    ${last ? `<button class="btn primary" id="toSummary" type="button">See my summary →</button>` : `<button class="btn primary" id="next" type="button">Next question →</button>`}</div>`;
+  work.innerHTML = h;
+  updatePreview();
+}
+function feedback(kind, icon, html) { return `<div class="feedback ${kind}" role="status"><span class="icon">${icon}</span><p>${html}</p></div>`; }
+function answerFeedback(r) {
+  if (!r.last) return "";
+  const L = r.last;
+  if (L.status === "correct") return feedback("good", "✓", `<strong>Correct!</strong> ${r.attempts === 1 ? "Nice work, first try." : `You got it in ${r.attempts} tries.`}`);
+  if (L.status === "revealed") return feedback("bad", "✗", "Here is the worked solution. Study each step, then try the next one on your own.");
+  if (L.status === "almost") return feedback("warn", "!", `<strong>Almost.</strong> ${esc(L.msg)}`);
+  if (L.status === "error") return feedback("warn", "!", esc(L.msg));
+  return feedback("bad", "✗", `<strong>Not correct.</strong> ${esc(L.msg)}`);
+}
+function updatePreview() {
+  const el = $("#preview"), inp = $("#ans"); if (!el || !inp) return;
+  const v = inp.value.trim();
+  if (!v) { el.innerHTML = `<span class="ph">Your answer will appear here as math.</span>`; return; }
+  try { const asts = parseAnswer(v); el.innerHTML = M("x = " + asts.map(tex).join(",\\; ")); }
+  catch (e) { el.innerHTML = `<span class="err">${esc(e.message)}</span>`; }
+}
+
+/* ---------- Summary ---------- */
+function analyze() {
+  const rows = [];
+  for (const key of Object.keys(SKILLS)) {
+    const qs = state.questions.filter(q => (key === "rationalize" ? q.rationalize : q.skill === key));
+    if (!qs.length) continue;
+    const rs = qs.map(q => state.res[q.id]).filter(r => r && (r.attempts || r.revealed || r.methodStatus));
+    const answered = rs.filter(r => r.attempts || r.revealed);
+    const methodChecked = rs.filter(r => r.methodStatus);
+    const methodRight = methodChecked.filter(r => r.methodOk).length;
+    const firstRight = answered.filter(r => r.firstOk && !r.revealed).length;
+    let weak;
+    if (key === "rationalize") weak = answered.some(r => !r.firstOk || r.revealed || r.ratIssue);
+    else weak = methodChecked.some(r => !r.methodOk) || answered.some(r => !r.firstOk || r.revealed);
+    const status = !rs.length ? "none" : weak ? "weak" : "strong";
+    rows.push({ key, total: qs.length, done: answered.length, methodChecked: methodChecked.length, methodRight, firstRight, status,
+      methodWeak: methodChecked.some(r => !r.methodOk), answerWeak: answered.some(r => !r.firstOk || r.revealed) });
+  }
+  return rows;
+}
+function renderSummary() {
+  const rows = analyze(), all = state.questions.map(q => state.res[q.id]).filter(Boolean);
+  const answered = all.filter(r => r.attempts || r.revealed), methodChecked = all.filter(r => r.methodStatus);
+  const unanswered = state.questions.length - answered.length;
+  const weak = rows.filter(r => r.status === "weak");
+  let h = `<div class="panel"><span class="eyebrow">Your results</span><h2 style="font-size:1.5rem;margin-top:4px">Summary</h2>
+    <div class="score-row">
+      <div class="score"><b>${answered.filter(r => r.firstOk && !r.revealed).length}/${answered.length}</b><span>answers right on the first try</span></div>
+      <div class="score"><b>${methodChecked.filter(r => r.methodOk).length}/${methodChecked.length}</b><span>best method chosen</span></div>
+      <div class="score"><b>${answered.filter(r => r.solved).length}/${state.questions.length}</b><span>questions solved</span></div>
+    </div>
+    ${unanswered ? `<p class="muted" style="margin:12px 0 0">${unanswered} question${unanswered === 1 ? " is" : "s are"} not finished yet. Click a number at the top to go back.</p>` : ""}
+  </div>`;
+  h += `<div class="panel"><h3 style="font-size:1.1rem">What you need more help on</h3>`;
+  if (!answered.length) h += `<p class="muted">Answer some questions first, then come back here to see what to practice.</p>`;
+  else if (!weak.length) h += `<p>Great job! You got every type right on the first try. Add more questions of any type below if you want extra practice.</p>`;
+  else {
+    h += `<div class="help-list">${weak.map(r => {
+      const why = [r.methodWeak ? "choosing the method" : "", r.answerWeak ? "getting the answer" : ""].filter(Boolean).join(" and ");
+      return `<div class="help-item"><div><b>${SKILLS[r.key].name}</b><p>${why ? `Trouble with ${why}. ` : ""}${esc(SKILLS[r.key].tip)}</p></div>
+        <button class="btn primary" data-more="${r.key}" type="button">+ Add 3 more</button></div>`;
+    }).join("")}</div>
+    <div class="actions" style="margin-top:14px"><button class="btn primary" id="moreAll" type="button">+ Add practice for all of these (mixed)</button></div>`;
+  }
+  h += `</div>`;
+  h += `<div class="panel"><h3 style="font-size:1.1rem">Results by question type</h3><div class="table-wrap"><table>
+    <thead><tr><th>Type</th><th>Method</th><th>1st try</th><th>Status</th><th></th></tr></thead><tbody>
+    ${rows.map(r => `<tr><td>${SKILLS[r.key].name}</td>
+      <td class="num">${r.key === "rationalize" ? "—" : `${r.methodRight}/${r.methodChecked}`}</td>
+      <td class="num">${r.firstRight}/${r.done}</td>
+      <td><span class="pill ${r.status}">${r.status === "weak" ? "Needs practice" : r.status === "strong" ? "Got it" : "Not started"}</span></td>
+      <td><button class="btn" data-more="${r.key}" type="button" style="padding:5px 10px;font-size:.8rem">+ 3 more</button></td></tr>`).join("")}
+    </tbody></table></div></div>`;
+  h += `<div class="nav"><button class="btn" id="backQ" type="button">← Back to questions</button>
+    <button class="btn" id="restart" type="button">Start over</button></div>`;
+  work.innerHTML = h;
+}
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function addMore(keys, per) {
+  const seen = new Set(state.questions.map(q => q.eq)), fresh = [];
+  for (const k of keys) for (let i = 0; i < per; i++) {
+    let q, tries = 0; do { q = GEN[k](); tries++; } while (seen.has(q.eq) && tries < 30);
+    seen.add(q.eq); fresh.push(q);
+  }
+  if (keys.length > 1) shuffle(fresh);
+  const start = state.questions.length;
+  fresh.forEach(q => { q.id = "q" + state.nextId++; q.extra = true; state.questions.push(q); });
+  state.cur = start; state.view = "q"; render(); window.scrollTo({ top: 0 });
+}
+
+/* ---------- Help ---------- */
+let helpSteps = 0;
+function openHelp() {
+  helpSteps = 0; renderHelp(); $("#helpModal").hidden = false; $("#helpClose").focus();
+}
+function closeHelp() { $("#helpModal").hidden = true; }
+function renderHelp() {
+  const inQ = state.view === "q", q = inQ ? state.questions[state.cur] : null;
+  let h = "";
+  if (q) {
+    const r = R(q.id);
+    h += `<section><h3>Hint for question ${state.cur + 1}</h3>`;
+    if (r.methodStatus === null) {
+      h += `<p class="muted">Choose and check a method first. Use the guide below to decide.</p>`;
+      if (helpSteps > 0) h += `<div class="hint-steps"><div class="h"><p>Method hint</p><div>${esc(methodHint(q))}</div></div></div>`;
+      else h += `<button class="btn" id="hintNext" type="button">Show a method hint</button>`;
+    } else {
+      h += `<p class="muted">Each click shows one more step of the solution.</p><div class="hint-steps">${q.steps.slice(0, helpSteps).map((s, i) => `<div class="h"><p>Step ${i + 1}: ${esc(s.t)}</p><div class="m">${M(s.m)}</div></div>`).join("")}</div>`;
+      if (helpSteps < q.steps.length) h += `<button class="btn" id="hintNext" type="button">${helpSteps ? "Show the next step" : "Show the first step"}</button>`;
+      else h += `<p class="muted">That's every step. Type the final answer in the box.</p>`;
+    }
+    h += `</section>`;
+  }
+  h += `<section><h3>How to pick the best method</h3><div class="guide">
+    <div><span>Every term shares a common factor</span><b>Factor out the GCF first</b></div>
+    <div><span>No x term, two perfect squares subtracted (like 9x² − 16)</span><b>Difference of squares</b></div>
+    <div><span>No x term, not perfect squares (like 3x² − 5 = 0)</span><b>Square root property</b></div>
+    <div><span>A squared binomial like (x + 2)² − 6 = 8</span><b>Square root property (don't expand)</b></div>
+    <div><span>x² + bx + c, and two numbers multiply to c and add to b</span><b>Factor (a = 1)</b></div>
+    <div><span>ax² + bx + c with a ≠ 1, and it factors</span><b>Factor (a ≠ 1), AC method</b></div>
+    <div><span>b² − 4ac is not a perfect square, so it won't factor</span><b>Quadratic formula</b></div>
+  </div></section>
+  <section><h3>Rationalizing the denominator</h3>
+    <p>Your final answer can't have a square root in the denominator. Multiply the top and bottom by that square root.</p>
+    <div class="m" style="font-size:1.15rem;overflow-x:auto">${M("\\frac{\\sqrt{5}}{\\sqrt{3}} = \\frac{\\sqrt{5}\\cdot\\sqrt{3}}{\\sqrt{3}\\cdot\\sqrt{3}} = \\frac{\\sqrt{15}}{3}", true)}</div>
+  </section>
+  <section><h3>How to type answers</h3><div class="typing">
+    <code>3, -2</code><span>Two solutions: separate them with a comma</span>
+    <code>2/3</code><span>Fractions use a slash</span>
+    <code>sqrt(15)/3</code><span>Square roots (or use the √ button)</span>
+    <code>-2 +- sqrt(14)</code><span>Plus or minus (or use the ± button)</span>
+    <code>(1 +- sqrt(13))/3</code><span>Put the whole top of a fraction in parentheses</span>
+    <code>4sqrt(3)</code><span>A number times a root</span>
+  </div></section>`;
+  $("#helpBody").innerHTML = h;
+}
+function methodHint(q) {
+  return {
+    gcf: "Look at the coefficients. Do all the terms share a common factor?",
+    factor1: "The leading coefficient is 1. Try to find two numbers that multiply to c and add to b.",
+    factorA: "The leading coefficient isn't 1 and there's no GCF. Does a·c have a factor pair that adds to b?",
+    dos: "There's no x term. Are both terms perfect squares being subtracted?",
+    sqrt: "There's no x term. Can you get x² by itself?",
+    vertex: "The x is trapped inside a square. Can you get the squared part by itself?",
+    formula: "Check the discriminant b² − 4ac. If it isn't a perfect square, the trinomial won't factor.",
+  }[q.skill];
+}
+
+/* ---------- Events ---------- */
+document.addEventListener("click", e => {
+  const t = e.target.closest("button"); if (!t) return;
+  const q = state.view === "q" ? state.questions[state.cur] : null;
+  if (t.matches(".dot")) { state.cur = +t.dataset.i; state.view = "q"; render(); return; }
+  if (t.id === "helpBtn" || t.hasAttribute("data-help")) { openHelp(); return; }
+  if (t.id === "helpClose") { closeHelp(); return; }
+  if (t.id === "hintNext") { helpSteps++; if (q) { R(q.id).hints++; save(); } renderHelp(); return; }
+  if (t.id === "summaryBtn" || t.id === "toSummary") { state.view = "summary"; render(); window.scrollTo({ top: 0 }); return; }
+  if (t.id === "backQ") { state.view = "q"; render(); return; }
+  if (t.id === "prev") { state.cur--; render(); window.scrollTo({ top: 0 }); return; }
+  if (t.id === "next") { state.cur++; render(); window.scrollTo({ top: 0 }); return; }
+  if (t.dataset.more) { addMore([t.dataset.more], 3); return; }
+  if (t.id === "moreAll") { addMore(analyze().filter(r => r.status === "weak").map(r => r.key), 2); return; }
+  if (t.id === "restart") {
+    if (t.dataset.confirm) { state = fresh(); Board.reset(); render(); return; }
+    t.dataset.confirm = "1"; t.textContent = "Click again to erase all progress"; t.classList.add("primary"); return;
+  }
+  if (!q) return;
+  const r = R(q.id);
+  if (t.dataset.method && r.methodStatus === null) { r.method = t.dataset.method; renderQuestion(); save(); return; }
+  if (t.id === "checkMethod" && r.method) {
+    r.methodStatus = r.method === q.best ? "right" : q.alsoOk.includes(r.method) ? "ok" : "wrong";
+    r.methodOk = r.methodStatus !== "wrong"; render(); setTimeout(() => $("#ans") && $("#ans").focus(), 0); return;
+  }
+  if (t.dataset.ins !== undefined) { insertAtCursor(t.dataset.ins); return; }
+  if (t.id === "checkAns") { doCheck(); return; }
+  if (t.id === "reveal") { r.revealed = true; r.last = { status: "revealed" }; if (r.firstOk === null) r.firstOk = false; render(); return; }
+});
+document.addEventListener("input", e => {
+  if (e.target.id === "ans") { const q = state.questions[state.cur]; state.drafts = state.drafts || {}; state.drafts[q.id] = e.target.value; updatePreview(); save(); }
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && !$("#helpModal").hidden) closeHelp();
+  if (e.key === "Enter" && e.target.id === "ans") { e.preventDefault(); doCheck(); }
+});
+$("#helpModal").addEventListener("click", e => { if (e.target.id === "helpModal") closeHelp(); });
+function insertAtCursor(txt) {
+  const inp = $("#ans"); if (!inp || inp.disabled) return;
+  const s = inp.selectionStart ?? inp.value.length, en = inp.selectionEnd ?? inp.value.length;
+  inp.value = inp.value.slice(0, s) + txt + inp.value.slice(en);
+  const pos = s + (txt === "()" ? 1 : txt.length);
+  inp.focus(); inp.setSelectionRange(pos, pos);
+  inp.dispatchEvent(new Event("input", { bubbles: true }));
+}
+function doCheck() {
+  const q = state.questions[state.cur], r = R(q.id), inp = $("#ans");
+  if (!inp || r.solved || r.revealed) return;
+  let res;
+  try { res = checkAnswer(q, inp.value); } catch (err) { res = { status: "error", msg: err.message }; }
+  r.last = res;
+  if (res.status !== "error") {
+    r.attempts++;
+    if (r.attempts === 1) r.firstOk = res.status === "correct";
+    if (res.rat) r.ratIssue = true;
+    if (res.status === "correct") r.solved = true;
+  }
+  render();
+  const again = $("#ans"); if (again && !again.disabled) { again.focus(); again.setSelectionRange(again.value.length, again.value.length); }
+}
+
+/* ---------- Whiteboard ---------- */
+const Board = {
+  canvas: $("#canvas"), wrap: $("#canvasWrap"), ctx: null, key: null, boards: {},
+  color: "#18202c", size: 2.5, erase: false, cur: null,
+  init() {
+    this.ctx = this.canvas.getContext("2d");
+    new ResizeObserver(() => this.resize()).observe(this.wrap);
+    const c = this.canvas;
+    c.addEventListener("pointerdown", e => this.down(e));
+    c.addEventListener("pointermove", e => this.move(e));
+    ["pointerup", "pointercancel", "pointerleave"].forEach(ev => c.addEventListener(ev, () => this.up()));
+    document.querySelectorAll(".swatch").forEach(b => b.addEventListener("click", () => {
+      this.color = b.dataset.color; this.erase = false;
+      document.querySelectorAll(".swatch").forEach(x => x.classList.toggle("on", x === b)); $("#eraser").classList.remove("on");
+    }));
+    $("#penThin").addEventListener("click", () => { this.size = 2.5; this.erase = false; this.tools("penThin"); });
+    $("#penThick").addEventListener("click", () => { this.size = 6; this.erase = false; this.tools("penThick"); });
+    $("#eraser").addEventListener("click", () => { this.erase = true; this.tools("eraser"); });
+    $("#undo").addEventListener("click", () => this.undo());
+    $("#clear").addEventListener("click", () => { const b = this.board(); if (!b.strokes.length) return; b.history.push({ clear: b.strokes }); b.strokes = []; this.redraw(); });
+    $("#grid").addEventListener("click", e => { this.wrap.classList.toggle("nogrid"); e.currentTarget.classList.toggle("on"); });
+  },
+  tools(id) { ["penThin", "penThick", "eraser"].forEach(x => $("#" + x).classList.toggle("on", x === id)); },
+  board() { return (this.boards[this.key] = this.boards[this.key] || { strokes: [], history: [] }); },
+  setKey(k, title) { $("#boardTitle").textContent = title; if (this.key === k) return; this.key = k; this.redraw(); },
+  reset() { this.boards = {}; this.redraw(); },
+  resize() {
+    const r = this.wrap.getBoundingClientRect(), d = window.devicePixelRatio || 1;
+    this.canvas.width = Math.max(1, Math.round(r.width * d)); this.canvas.height = Math.max(1, Math.round(r.height * d));
+    this.ctx.setTransform(d, 0, 0, d, 0, 0); this.redraw();
+  },
+  pt(e) { const r = this.canvas.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; },
+  down(e) {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    this.canvas.setPointerCapture(e.pointerId);
+    this.cur = { color: this.color, size: this.erase ? 22 : this.size, erase: this.erase, pts: [this.pt(e)] };
+    this.drawStroke(this.cur);
+  },
+  move(e) {
+    if (!this.cur) return;
+    const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+    for (const ce of (evs.length ? evs : [e])) {
+      const p = this.pt(ce), pts = this.cur.pts, last = pts[pts.length - 1];
+      pts.push(p); this.segment(this.cur, last, p);
+    }
+  },
+  up() {
+    if (!this.cur) return;
+    const b = this.board(); b.strokes.push(this.cur); b.history.push({ stroke: true }); this.cur = null;
+  },
+  style(s) {
+    const x = this.ctx; x.globalCompositeOperation = s.erase ? "destination-out" : "source-over";
+    x.strokeStyle = s.color; x.fillStyle = s.color; x.lineWidth = s.size; x.lineCap = "round"; x.lineJoin = "round";
+  },
+  segment(s, a, b) { const x = this.ctx; this.style(s); x.beginPath(); x.moveTo(a[0], a[1]); x.lineTo(b[0], b[1]); x.stroke(); },
+  drawStroke(s) {
+    const x = this.ctx; this.style(s);
+    if (s.pts.length === 1) { x.beginPath(); x.arc(s.pts[0][0], s.pts[0][1], s.size / 2, 0, Math.PI * 2); x.fill(); return; }
+    x.beginPath(); x.moveTo(s.pts[0][0], s.pts[0][1]);
+    for (let i = 1; i < s.pts.length; i++) x.lineTo(s.pts[i][0], s.pts[i][1]);
+    x.stroke();
+  },
+  redraw() {
+    if (!this.ctx) return;
+    const x = this.ctx; x.save(); x.setTransform(1, 0, 0, 1, 0, 0); x.clearRect(0, 0, this.canvas.width, this.canvas.height); x.restore();
+    if (this.key) this.board().strokes.forEach(s => this.drawStroke(s));
+    x.globalCompositeOperation = "source-over";
+  },
+  undo() {
+    const b = this.board(), h = b.history.pop(); if (!h) return;
+    if (h.clear) b.strokes = h.clear; else b.strokes.pop();
+    this.redraw();
+  },
+};
+
+function measureHeader() { document.documentElement.style.setProperty("--header-h", $("#top").offsetHeight + "px"); }
+new ResizeObserver(measureHeader).observe($("#top"));
+Board.init();
+measureHeader();
+render();
+</script>
+
+</body>
+</html>
